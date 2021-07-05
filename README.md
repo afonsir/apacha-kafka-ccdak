@@ -100,3 +100,37 @@ kafka-topics \
   --bootstrap-server kafka-[BROKER_ID]:9092 \
   --list
 ```
+
+# Create a Producer and a Consumer
+
+- Create the topic *inventory_purchases*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic inventory_purchases \
+  --replication-factor 3 \
+  --partitions 6
+```
+
+- Create the producer and add some messages:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:9092 \
+  --topic inventory_purchases
+
+> product: apples, quantity: 5
+> product: lemons, quantity: 7
+> product: bananas, quantity: 3
+```
+
+- Create the consumer:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic inventory_purchases \
+  --from-beginning
+```
