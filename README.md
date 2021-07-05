@@ -101,7 +101,7 @@ kafka-topics \
   --list
 ```
 
-# Create a Producer and a Consumer
+## Create a Producer and a Consumer
 
 - Create the topic *inventory_purchases*:
 
@@ -133,4 +133,33 @@ kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic inventory_purchases \
   --from-beginning
+```
+
+## Consuming from a Consumer Group
+
+- Create a Consumer Group, with one consumer:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic inventory_purchases \
+  --group 1 > /tmp/group1_consumer1.txt
+```
+
+- Create another Consumer Group, with two consumers:
+
+```bash
+# In one session
+
+kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic inventory_purchases \
+  --group 2 > /tmp/group2_consumer1.txt
+
+# In another session
+
+kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic inventory_purchases \
+  --group 2 > /tmp/group2_consumer2.txt
 ```
