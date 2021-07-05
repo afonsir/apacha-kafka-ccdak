@@ -1,0 +1,94 @@
+version: '3'
+
+x-zookeeper-common:
+  &zookeeper-common
+  image: confluentinc/cp-zookeeper:6.2.0
+  environment:
+    &zookeeper-common-env
+    ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: 24
+    ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT: 3
+    ZOOKEEPER_CLIENT_PORT: 2181
+    ZOOKEEPER_DATA_DIR: /var/lib/zookeeper/
+    ZOOKEEPER_INIT_LIMIT: 5
+    ZOOKEEPER_MAX_CLIENT_CNXNS: 0
+    ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    ZOOKEEPER_SYNC_LIMIT: 2
+    ZOOKEEPER_TICK_TIME: 2000
+  healthcheck:
+    test: ["CMD", "nc", "-vz", "localhost", "2181"]
+    interval: 10s
+    timeout: 10s
+    retries: 5
+
+x-kafka-common:
+  &kafka-common
+  image: confluentinc/cp-kafka:6.2.0
+  environment:
+    &kafka-common-env
+    KAFKA_DEFAULT_REPLICATION_FACTOR: 3
+    KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+    # KAFKA_LOG_DIRS: /var/lib/kafka/data
+    KAFKA_LOG_RETENTION_HOURS: 168
+    KAFKA_MIN_INSYNC_REPLICAS: 2
+    KAFKA_NUM_PARTITIONS: 3
+    KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+    KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS: 6000
+  healthcheck:
+    test: ["CMD", "nc", "-vz", "localhost", "9092"]
+    interval: 10s
+    timeout: 10s
+    retries: 5
+  depends_on:
+    zookeeper-1:
+      condition: service_healthy
+    zookeeper-2:
+      condition: service_healthy
+    zookeeper-3:
+      condition: service_healthy
+
+services:
+  zookeeper-1:
+    <<: *zookeeper-common
+    hostname: zoo-1
+    environment:
+      <<: *zookeeper-common-env
+      ZOOKEEPER_SERVER_ID: 1
+
+  zookeeper-2:
+    <<: *zookeeper-common
+    hostname: zoo-2
+    environment:
+      <<: *zookeeper-common-env
+      ZOOKEEPER_SERVER_ID: 2
+
+  zookeeper-3:
+    <<: *zookeeper-common
+    hostname: zoo-3
+    environment:
+      <<: *zookeeper-common-env
+      ZOOKEEPER_SERVER_ID: 3
+
+  kafka-1:
+    <<: *kafka-common
+    hostname: kafka-1
+    environment:
+      <<: *kafka-common-env
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://kafka-1:29092
+      KAFKA_BROKER_ID: 1
+
+  kafka-2:
+    <<: *kafka-common
+    hostname: kafka-2
+    environment:
+      <<: *kafka-common-env
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://kafka-2:29092
+      KAFKA_BROKER_ID: 2
+
+  kafka-3:
+    <<: *kafka-common
+    hostname: kafka-3
+    environment:
+      <<: *kafka-common-env
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://kafka-3:29092
+      KAFKA_BROKER_ID: 3
