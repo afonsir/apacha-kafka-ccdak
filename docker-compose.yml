@@ -7,18 +7,13 @@ x-zookeeper-common:
     &zookeeper-common-env
     ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: 24
     ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT: 3
-    ZOOKEEPER_CLIENT_PORT: 2181
     ZOOKEEPER_DATA_DIR: /var/lib/zookeeper/
     ZOOKEEPER_INIT_LIMIT: 5
     ZOOKEEPER_MAX_CLIENT_CNXNS: 0
-    ZOOKEEPER_SERVERS: zookeeper-1:2888:3888;zookeeper-2:2888:3888;zookeeper-3:2888:3888
+    ZOOKEEPER_SERVERS: localhost:22888:23888;localhost:32888:33888;localhost:42888:43888
     ZOOKEEPER_SYNC_LIMIT: 2
     ZOOKEEPER_TICK_TIME: 2000
-  healthcheck:
-    test: ["CMD", "nc", "-vz", "localhost", "2181"]
-    interval: 10s
-    timeout: 10s
-    retries: 5
+  network_mode: host
 
 x-kafka-common:
   &kafka-common
@@ -32,20 +27,9 @@ x-kafka-common:
     KAFKA_LOG_RETENTION_HOURS: 168
     KAFKA_MIN_INSYNC_REPLICAS: 2
     KAFKA_NUM_PARTITIONS: 3
-    KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2181,zookeeper-3:2181
+    KAFKA_ZOOKEEPER_CONNECT: localhost:22181,localhost:32181,localhost:42181
     KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS: 6000
-  healthcheck:
-    test: ["CMD", "nc", "-vz", "localhost", "9092"]
-    interval: 10s
-    timeout: 10s
-    retries: 5
-  depends_on:
-    zookeeper-1:
-      condition: service_healthy
-    zookeeper-2:
-      condition: service_healthy
-    zookeeper-3:
-      condition: service_healthy
+  network_mode: host
 
 services:
   zookeeper-1:
@@ -54,6 +38,12 @@ services:
     environment:
       <<: *zookeeper-common-env
       ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 22181
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "22181"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   zookeeper-2:
     <<: *zookeeper-common
@@ -61,6 +51,12 @@ services:
     environment:
       <<: *zookeeper-common-env
       ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 32181
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "32181"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   zookeeper-3:
     <<: *zookeeper-common
@@ -68,27 +64,69 @@ services:
     environment:
       <<: *zookeeper-common-env
       ZOOKEEPER_SERVER_ID: 3
+      ZOOKEEPER_CLIENT_PORT: 42181
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "42181"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   kafka-1:
     <<: *kafka-common
     hostname: kafka-1
     environment:
       <<: *kafka-common-env
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:9092,PLAINTEXT_HOST://kafka-1:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092
       KAFKA_BROKER_ID: 1
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "29092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
 
   kafka-2:
     <<: *kafka-common
     hostname: kafka-2
     environment:
       <<: *kafka-common-env
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092,PLAINTEXT_HOST://kafka-2:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:39092
       KAFKA_BROKER_ID: 2
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "39092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
 
   kafka-3:
     <<: *kafka-common
     hostname: kafka-3
     environment:
       <<: *kafka-common-env
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:9092,PLAINTEXT_HOST://kafka-3:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:49092
       KAFKA_BROKER_ID: 3
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "49092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      zookeeper-1:
+        condition: service_healthy
+      zookeeper-2:
+        condition: service_healthy
+      zookeeper-3:
+        condition: service_healthy
