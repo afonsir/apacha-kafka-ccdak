@@ -1,0 +1,22 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.apache.kafka:kafka-streams:2.2.1'
+    implementation 'org.apache.kafka:kafka-clients:2.2.1'
+    testImplementation 'junit:junit:4.12'
+}
+
+application {
+    mainClassName = 'com.github.afonsir.streams.StreamsMain'
+}
+
+task(runStreams, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.streams.StreamsMain'
+   classpath = sourceSets.main.runtimeClasspath
+}

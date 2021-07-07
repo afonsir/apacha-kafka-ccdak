@@ -163,3 +163,57 @@ kafka-console-consumer \
   --topic inventory_purchases \
   --group 2 > /tmp/group2_consumer2.txt
 ```
+
+## Data Streaming
+
+- Create the topic *streams-input-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic streams-input-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *streams-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic streams-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Start Stream Java project:
+
+```bash
+./gradlew run
+```
+
+- Create a consumer for *streams-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic streams-output-topic \
+  --property print.key=true
+```
+
+- Create a producer for *streams-input-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic streams-input-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>key1:value1
+>key2:value2
+>key3:value3
+```
