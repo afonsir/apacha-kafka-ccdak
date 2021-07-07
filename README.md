@@ -217,3 +217,58 @@ kafka-console-producer \
 >key2:value2
 >key3:value3
 ```
+
+## Stateless Transformations
+
+- Create the topic *stateless-transformations-input-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic stateless-transformations-input-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *stateless-transformations-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic stateless-transformations-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Start StatelessTransformations Java project:
+
+```bash
+./gradlew runStatelessTransformations
+```
+
+- Create a consumer for *stateless-transformations-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic stateless-transformations-output-topic \
+  --property print.key=true
+```
+
+- Create a producer for *stateless-transformations-input-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic stateless-transformations-input-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>akey:avalue
+>akey:avalue
+>akey:bvalue
+>bkey:bvalue
+```

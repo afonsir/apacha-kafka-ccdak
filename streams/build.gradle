@@ -20,3 +20,8 @@ task(runStreams, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.streams.StreamsMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runStatelessTransformations, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.streams.StatelessTransformationsMain'
+   classpath = sourceSets.main.runtimeClasspath
+}
