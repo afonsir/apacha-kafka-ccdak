@@ -272,3 +272,99 @@ kafka-console-producer \
 >akey:bvalue
 >bkey:bvalue
 ```
+
+## Aggregation
+
+- Create the topic *aggregations-input-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic aggregations-input-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *aggregations-output-character-count-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic aggregations-output-character-count-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *aggregations-output-count-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic aggregations-output-count-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *aggregations-output-reduce-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic aggregations-output-reduce-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Start AggregationsMain Java project:
+
+```bash
+./gradlew runAggregations
+```
+
+- Create a consumer for *aggregations-output-character-count-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic aggregations-output-character-count-topic \
+  --property print.key=true \
+  --property value.deserializer=org.apache.kafka.common.serialization.IntegerDeserializer
+```
+
+- Create a consumer for *aggregations-output-count-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic aggregations-output-count-topic \
+  --property print.key=true \
+  --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
+```
+
+- Create a consumer for *aggregations-output-reduce-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic aggregations-output-reduce-topic \
+  --property print.key=true
+```
+
+- Create a producer for *aggregations-input-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic aggregations-input-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>b:hello
+>b:world
+>c:hello
+```

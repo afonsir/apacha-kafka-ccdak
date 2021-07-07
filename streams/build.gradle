@@ -25,3 +25,8 @@ task(runStatelessTransformations, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.streams.StatelessTransformationsMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runAggregations, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.streams.AggregationsMain'
+   classpath = sourceSets.main.runtimeClasspath
+}
