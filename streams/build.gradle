@@ -35,3 +35,8 @@ task(runJoins, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.streams.JoinsMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runWindowing, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.streams.WindowingMain'
+   classpath = sourceSets.main.runtimeClasspath
+}

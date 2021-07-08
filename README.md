@@ -486,3 +486,61 @@ kafka-console-producer \
 >a:a
 >b:bar
 ```
+
+## Windowing
+
+- Create the topic *windowing-input-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic windowing-input-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *windowing-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic windowing-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Start WindowingMain Java project:
+
+```bash
+./gradlew runWindowing
+```
+
+- Create a consumer for *windowing-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:29092 \
+  --topic windowing-output-topic \
+  --property print.key=true
+```
+
+- Create a producer for *windowing-input-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic windowing-input-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>a:a
+>b:hello
+>c:hello
+>c:world
+# after 10 secods
+>c:hello
+>c:world
+```
