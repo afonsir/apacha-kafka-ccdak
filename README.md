@@ -368,3 +368,121 @@ kafka-console-producer \
 >b:world
 >c:hello
 ```
+
+## Joins
+
+- Create the topic *joins-input-topic-left*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic joins-input-topic-left \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *joins-input-topic-right*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic joins-input-topic-right \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *inner-join-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic inner-join-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *left-join-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic left-join-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Create the topic *outer-join-output-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:39092 \
+  --create \
+  --topic outer-join-output-topic \
+  --replication-factor 3 \
+  --partitions 3
+```
+
+- Start JoinsMain Java project:
+
+```bash
+./gradlew runJoins
+```
+
+- Create a consumer for *inner-join-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:29092 \
+  --topic inner-join-output-topic \
+  --property print.key=true
+```
+
+- Create a consumer for *left-join-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:39092 \
+  --topic left-join-output-topic \
+  --property print.key=true
+```
+
+- Create a consumer for *outer-join-output-topic*:
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server localhost:49092 \
+  --topic outer-join-output-topic \
+  --property print.key=true
+```
+
+- Create a producer for *joins-input-topic-left*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic joins-input-topic-left \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>a:a
+>b:foo
+```
+
+- Create a producer for *joins-input-topic-right*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic joins-input-topic-right \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>a:a
+>b:bar
+```

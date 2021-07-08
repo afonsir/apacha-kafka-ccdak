@@ -30,3 +30,8 @@ task(runAggregations, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.streams.AggregationsMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runJoins, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.streams.JoinsMain'
+   classpath = sourceSets.main.runtimeClasspath
+}
