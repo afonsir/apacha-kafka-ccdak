@@ -544,3 +544,28 @@ kafka-console-producer \
 >c:hello
 >c:world
 ```
+
+## Custom Configurations
+
+- Change the cluster configuration:
+
+```bash
+kafka-configs \
+  --bootstrap-server localhost:29092 \
+  --alter \
+  --entity-type brokers \
+  --entity-default \
+  --add-config retention.ms=259200000
+```
+
+- Change a topic configuration:
+
+```bash
+kafka-configs \
+  --bootstrap-server localhost:29092 \
+  --alter \
+  --entity-type topics \
+  --entity-name inventory-purchases \
+  --add-config unclean.leader.election.enable=true, \
+               retention.ms=259200000
+```
