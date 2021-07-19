@@ -598,3 +598,63 @@ kafka-topics \
 
 ./gradlew runProducer
 ```
+
+## Consume from Multiple Topics
+
+- Create the topic *first-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic first-topic \
+  --replication-factor 2 \
+  --partitions 2
+```
+
+- Create the topic *second-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic second-topic \
+  --replication-factor 2 \
+  --partitions 2
+```
+
+```bash
+# producer-and-consumer
+
+./gradlew runConsumer
+```
+
+- Create a producer for *first-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic first-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>a:a1
+>b:foo
+>c:hello
+```
+
+- Create a producer for *second-topic*:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic second-topic \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>a:a2
+>b:bar
+>c:world
+```

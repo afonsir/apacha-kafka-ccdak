@@ -15,3 +15,8 @@ task(runProducer, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.kafka.ProducerMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runConsumer, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.kafka.ConsumerMain'
+   classpath = sourceSets.main.runtimeClasspath
+}
