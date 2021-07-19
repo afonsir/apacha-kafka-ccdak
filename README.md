@@ -245,6 +245,8 @@ kafka-topics \
 - Start StatelessTransformations Java project:
 
 ```bash
+# streams
+
 ./gradlew runStatelessTransformations
 ```
 
@@ -322,6 +324,8 @@ kafka-topics \
 - Start AggregationsMain Java project:
 
 ```bash
+# streams
+
 ./gradlew runAggregations
 ```
 
@@ -429,6 +433,8 @@ kafka-topics \
 - Start JoinsMain Java project:
 
 ```bash
+# streams
+
 ./gradlew runJoins
 ```
 
@@ -514,6 +520,8 @@ kafka-topics \
 - Start WindowingMain Java project:
 
 ```bash
+# streams
+
 ./gradlew runWindowing
 ```
 
