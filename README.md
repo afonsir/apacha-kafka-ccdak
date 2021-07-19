@@ -577,3 +577,24 @@ kafka-configs \
   --add-config unclean.leader.election.enable=true, \
                retention.ms=259200000
 ```
+
+## Producer Metadata
+
+- Create the topic *count-topic*:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic count-topic \
+  --replication-factor 2 \
+  --partitions 2
+```
+
+- Start ProducerMain Java project:
+
+```bash
+# producer-and-consumer
+
+./gradlew runProducer
+```
