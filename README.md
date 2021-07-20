@@ -658,3 +658,112 @@ kafka-console-producer \
 >b:bar
 >c:world
 ```
+
+## Confluent REST Proxy
+
+- Enable **schema-registry** and **kafka-rest** services:
+
+```bash
+sudo systemctl enable confluent-schema-registry confluent-kafka-rest
+```
+
+- Start **schema-registry** and **kafka-rest** services:
+
+```bash
+sudo systemctl start confluent-schema-registry confluent-kafka-rest
+```
+
+### Produce records
+
+- Request to produce records:
+
+```bash
+curl \
+  --request POST \
+  --header 'Content-Type: application/vnd.kafka.json.v2+json' \
+  --data-binary @records.json \
+  http://localhost:8082/topics/<TOPIC_NAME>
+```
+
+- Request body:
+
+```json
+// records.json
+
+{
+  "records": [
+    {
+      "key": "<KEY>",
+      "value": "VALUE"
+    },
+    {
+      "key": "<KEY>",
+      "value": "VALUE"
+    }
+  ]
+}
+```
+
+### Consume records
+
+- Create a **consumer** and **consumer-instance**:
+
+```bash
+curl \
+  --request POST \
+  --header 'Content-Type: application/vnd.kafka.json.v2+json' \
+  --data-binary @consumer-instance.json \
+  http://localhost:8082/consumers/<CONSUMER_NAME>
+```
+
+- Request body:
+
+```json
+// consumer-instance.json
+
+{
+  "name": "<CONSUMER_INSTANCE_NAME>",
+  "format": "json",
+  "auto.offset.reset": "earliest"
+}
+```
+
+- Subscribe **consumer instance** to a **topic**:
+
+```bash
+curl \
+  --request POST \
+  --header 'Content-Type: application/vnd.kafka.json.v2+json' \
+  --data-binary @topic-subscription.json \
+  http://localhost:8082/consumers/<CONSUMER_NAME>/instances/<CONSUMER_INSTANCE_NAME>/subscription
+```
+
+- Request body:
+
+```json
+// topic-subscription.json
+
+{
+  "topics": [
+    "<TOPIC_NAME>"
+  ]
+}
+```
+
+- To consume messages:
+
+```bash
+curl \
+  --request GET \
+  --header 'Content-Type: application/vnd.kafka.json.v2+json' \
+  http://localhost:8082/consumers/<CONSUMER_NAME>/instances/<CONSUMER_INSTANCE_NAME>/records
+```
+
+- To delete a **consumer instance**:
+
+```bash
+curl \
+  --request DELETE \
+  --header 'Content-Type: application/vnd.kafka.json.v2+json' \
+  http://localhost:8082/consumers/<CONSUMER_NAME>/instances/<CONSUMER_INSTANCE_NAME>
+```
