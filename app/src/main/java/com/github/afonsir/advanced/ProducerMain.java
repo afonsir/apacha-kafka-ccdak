@@ -1,4 +1,4 @@
-package com.github.afonsir.kafka;
+package com.github.afonsir.advanced;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;

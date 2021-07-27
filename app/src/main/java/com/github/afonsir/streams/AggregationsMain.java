@@ -1,4 +1,4 @@
-package com.github.afonsir.services;
+package com.github.afonsir.streams;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
