@@ -14,12 +14,12 @@ dependencies {
 
 // ----- Advanced -----
 
-task(runConsumer, dependsOn: 'classes', type: JavaExec) {
+task(runConsumerAdvanced, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.advanced.ConsumerMain'
    classpath = sourceSets.main.runtimeClasspath
 }
 
-task(runProducer, dependsOn: 'classes', type: JavaExec) {
+task(runProducerAdvanced, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.advanced.ProducerMain'
    classpath = sourceSets.main.runtimeClasspath
 }
