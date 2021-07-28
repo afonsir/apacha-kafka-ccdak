@@ -29,6 +29,44 @@ x-kafka-common:
     KAFKA_NUM_PARTITIONS: 3
     KAFKA_ZOOKEEPER_CONNECT: localhost:22181,localhost:32181,localhost:42181
     KAFKA_ZOOKEEPER_CONNECTION_TIMEOUT_MS: 6000
+  depends_on:
+    zookeeper-1:
+      condition: service_healthy
+    zookeeper-2:
+      condition: service_healthy
+    zookeeper-3:
+      condition: service_healthy
+  network_mode: host
+
+x-kafka-schema-registry:
+  &kafka-schema-registry
+  image: confluentinc/cp-schema-registry:6.2.0
+  environment:
+    &kafka-schema-registry-env
+    SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
+    SCHEMA_REGISTRY_DEBUG: "true"
+  depends_on:
+    kafka-1:
+      condition: service_healthy
+    kafka-2:
+      condition: service_healthy
+    kafka-3:
+      condition: service_healthy
+  network_mode: host
+
+x-kafka-rest-proxy:
+  &kafka-rest-proxy
+  image: confluentinc/cp-kafka-rest:6.2.0
+  environment:
+    &kafka-rest-proxy-env
+    KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
+  depends_on:
+    kafka-1:
+      condition: service_healthy
+    kafka-2:
+      condition: service_healthy
+    kafka-3:
+      condition: service_healthy
   network_mode: host
 
 services:
@@ -83,13 +121,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
 
   kafka-2:
     <<: *kafka-common
@@ -103,13 +134,6 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
 
   kafka-3:
     <<: *kafka-common
@@ -123,10 +147,84 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    depends_on:
-      zookeeper-1:
-        condition: service_healthy
-      zookeeper-2:
-        condition: service_healthy
-      zookeeper-3:
-        condition: service_healthy
+
+  schema-1:
+    <<: *kafka-schema-registry
+    hostname: schema-1
+    environment:
+      <<: *kafka-schema-registry-env
+      SCHEMA_REGISTRY_LISTENERS: http://localhost:28081
+      SCHEMA_REGISTRY_HOST_NAME: schema-1
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "28081"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  schema-2:
+    <<: *kafka-schema-registry
+    hostname: schema-2
+    environment:
+      <<: *kafka-schema-registry-env
+      SCHEMA_REGISTRY_LISTENERS: http://localhost:38081
+      SCHEMA_REGISTRY_HOST_NAME: schema-2
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "38081"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  schema-3:
+    <<: *kafka-schema-registry
+    hostname: schema-3
+    environment:
+      <<: *kafka-schema-registry-env
+      SCHEMA_REGISTRY_LISTENERS: http://localhost:48081
+      SCHEMA_REGISTRY_HOST_NAME: schema-3
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "48081"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  rest-1:
+    <<: *kafka-rest-proxy
+    hostname: rest-1
+    environment:
+      <<: *kafka-rest-proxy-env
+      KAFKA_REST_LISTENERS: http://localhost:28082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://localhost:28081
+      KAFKA_REST_HOST_NAME: rest-1
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "28082"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  rest-2:
+    <<: *kafka-rest-proxy
+    hostname: rest-2
+    environment:
+      <<: *kafka-rest-proxy-env
+      KAFKA_REST_LISTENERS: http://localhost:38082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://localhost:38081
+      KAFKA_REST_HOST_NAME: rest-2
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "38082"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  rest-3:
+    <<: *kafka-rest-proxy
+    hostname: rest-3
+    environment:
+      <<: *kafka-rest-proxy-env
+      KAFKA_REST_LISTENERS: http://localhost:48082
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://localhost:48081
+      KAFKA_REST_HOST_NAME: rest-3
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "48082"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
