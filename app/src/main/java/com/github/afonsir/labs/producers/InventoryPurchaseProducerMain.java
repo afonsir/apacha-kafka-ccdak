@@ -33,7 +33,7 @@ public class InventoryPurchaseProducerMain {
         Producer<String, String> producer = new KafkaProducer<String, String>( properties );
 
         try {
-            File file = new File(Main.class.getClassLoader().getResource( "sample_transaction_log.txt" ).getFile());
+            File file = new File( InventoryPurchaseProducerMain.class.getClassLoader().getResource( "sample_transaction_log.txt" ).getFile() );
             BufferedReader br = new BufferedReader( new FileReader(file) );
             String line;
 
