@@ -30,10 +30,10 @@ public class SchemaRegistryProducerMain {
         // create producer
         KafkaProducer<String, Person> producer = new KafkaProducer<String, Person>( properties );
 
-        Person kenny = new Person( 1234, "Kenny", "Armstrong", "kenny@mail.com" );
+        Person kenny = new Person( 1234, "Kenny", "Armstrong", "kenny@mail.com", "@kenny" );
         producer.send( new ProducerRecord<String, Person>( "employees", kenny.getId().toString(), kenny ));
 
-        Person terry = new Person( 1234, "Terry", "Cox", "terry@mail.com" );
+        Person terry = new Person( 1234, "Terry", "Cox", "terry@mail.com", "@terry" );
         producer.send( new ProducerRecord<String, Person>( "employees", terry.getId().toString(), terry ));
 
         producer.close();

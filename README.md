@@ -767,3 +767,17 @@ curl \
   --header 'Content-Type: application/vnd.kafka.json.v2+json' \
   http://localhost:8082/consumers/<CONSUMER_NAME>/instances/<CONSUMER_INSTANCE_NAME>
 ```
+
+### Changing Avro Schema
+
+Compatibility types:
+
+- BACKWARD (default)
+- BACKWARD_TRANSITIVE (all backward)
+- FORWARD (current)
+- FORWARD_TRANSITIVE (all forward)
+- FULL (current)
+- FULL_TRANSITIVE (all)
+- NONE
+
+Source: [Confluent Documentation](https://docs.confluent.io/platform/current/schema-registry/avro.html)
