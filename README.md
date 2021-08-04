@@ -781,3 +781,99 @@ Compatibility types:
 - NONE
 
 Source: [Confluent Documentation](https://docs.confluent.io/platform/current/schema-registry/avro.html)
+
+## Kafka Connect
+
+Source to Sink connector.
+
+- Start Kafka Connect service:
+
+```bash
+sudo systemctl start confluent-kafka-connect
+```
+
+### Using with files
+
+- Create **input.txt** file, with some data:
+
+```bash
+touch input.txt
+```
+
+- Create **output.txt** file, with following permissions:
+
+```bash
+touch output.txt && chmod 777 output.txt
+```
+
+- Create a source connector:
+
+```bash
+curl \
+  --request POST \
+  --header 'Accept: */*' \
+  --header 'Content-Type: application/json' \
+  --data-binary @source-connector.json \
+  http://localhost:8083/connectors
+```
+
+- Request body:
+
+```json
+// source-connector.json
+
+{
+  "name": "file_source_connector",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSourceConnector",
+    "topics": "connector-topic",
+    "file": "/home/user/input.txt",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter"
+  }
+}
+```
+
+- Create a sink connector:
+
+```bash
+curl \
+  --request POST \
+  --header 'Accept: */*' \
+  --header 'Content-Type: application/json' \
+  --data-binary @sink-connector.json \
+  http://localhost:8083/connectors
+```
+
+- Request body:
+
+```json
+// sink-connector.json
+
+{
+  "name": "file_sink_connector",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+    "topics": "connector-topic",
+    "file": "/home/user/output.txt",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter"
+  }
+}
+```
+
+- Check the created connector status:
+
+```bash
+curl --request GET http://localhost:8083/connectors/<CONNECTOR_NAME>/status
+```
+
+- To see the connector metadata:
+
+```bash
+curl --request GET http://localhost:8083/connectors/<CONNECTOR_NAME>
+```
+
+- To delete a connector:
+
+```bash
+curl --request DELETE http://localhost:8083/connectors/<CONNECTOR_NAME>
+```
