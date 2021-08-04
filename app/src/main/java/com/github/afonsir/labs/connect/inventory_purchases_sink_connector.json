@@ -1,0 +1,11 @@
+{
+  "name": "inventory_purchases_sink_connector",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+    "tasks.max": "1",
+    "topics": "inventory_purchases",
+    "file": "/home/cloud_user/output/output.txt",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter"
+  }
+}

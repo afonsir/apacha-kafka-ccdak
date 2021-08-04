@@ -1,0 +1,12 @@
+{
+  "name": "jdbc_source_postgres_connector",
+  "config": {
+    "connector.class": "io.confluent.connect.jdbc.JdbcSourceConnector",
+    "connection.url": "jdbc:postgresql://10.0.1.102:5432/<database name>",
+    "connection.user": "<database user>",
+    "connection.password": "<database password>",
+    "topic.prefix": "postgres-",
+    "mode":"timestamp",
+    "timestamp.column.name": "update_ts"
+  }
+}
