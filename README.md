@@ -81,7 +81,7 @@ zookeeper.connect=zoo-[BROKER_ID]:2181
 sudo systemctl enable confluent-kafka
 ```
 
-- Start Zookeeper service:
+- Start Kafka service:
 
 ```bash
 sudo systemctl start confluent-kafka
@@ -876,4 +876,267 @@ curl --request GET http://localhost:8083/connectors/<CONNECTOR_NAME>
 
 ```bash
 curl --request DELETE http://localhost:8083/connectors/<CONNECTOR_NAME>
+```
+
+## TLS Encryption
+
+- Create a Certificate Authority (CA):
+
+```bash
+openssl req -new \
+  -x509 \
+  -keyout ca-key \
+  -out ca-cert \
+  -days 365 \
+  -subj "/C=US/ST=Texas/L=Keller/O=Linux Academy/OU=Content/CN=CCDAK"
+```
+
+- Create a *client* keystore:
+
+```bash
+keytool \
+  -keystore client.truststore.jks \
+  -alias CARoot \
+  -import \
+  -file ca-cert
+```
+
+- Create a *server* keystore:
+
+```bash
+keytool \
+  -keystore server.truststore.jks \
+  -alias CARoot \
+  -import \
+  -file ca-cert
+```
+
+- Create a keystore for each broker server:
+
+```bash
+keytool \
+  -keystore kafka-[BROKER_ID].truststore.jks \
+  -alias localhost \
+  -validity 365 \
+  -genkey \
+  -keyalg RSA \
+  -dname "CN=<PUBLIC_DNS_NAME>, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown" \
+  -ext san=dns:kafka-[BROKER_ID],dns:localhost,ip:127.0.0.1,ip:<PRIVATE_IP_ADDR>
+```
+
+- Generate a certificate for each broker server:
+
+```bash
+keytool \
+  -keystore kafka-[BROKER_ID].keystore.jks \
+  -alias localhost \
+  -certreq \
+  -file kafka-[BROKER_ID]-cert-file
+```
+
+- Create a configuration file for certificate signing:
+
+```bash
+echo subjectAltName = DNS:kafka-[BROKER_ID],DNS:localhost,IP:127.0.0.1,IP:<PRIVATE_IP_ADDR> >> kafka-[BROKER_ID]-extfile.conf
+```
+
+- Sign certificates:
+
+```bash
+openssl x509 \
+  -req \
+  -CA ca-cert \
+  -CAkey ca-key \
+  -in kafka-[BROKER_ID]-cert-file \
+  -out kafka-[BROKER_ID]-cert-signed \
+  -days 365 \
+  -CAcreateserial \
+  -extfile kafka-[BROKER_ID]-extfile.conf
+```
+
+- Import CA certificate to each broker keystore:
+
+```bash
+keytool \
+  -keystore kafka-[BROKER_ID].keystore.jks \
+  -alias CARoot \
+  -import \
+  -file ca-cert
+```
+
+- Import signed certificates to each broker keystore:
+
+```bash
+keytool \
+  -keystore kafka-[BROKER_ID].keystore.jks \
+  -alias localhost \
+  -import \
+  -file kafka-[BROKER_ID]-cert-signed
+```
+
+- Copy keystores to proper servers:
+
+```bash
+# same server
+cp kafka-1.keystore.jks server.truststore.jks /home/<USER>
+
+# remote servers
+scp [ kafka-2, kafka-3 ].keystore.jks server.truststore.jks <USER>@[ kafka-2, kafka-3 ]:/home/<USER>
+```
+
+- Move keystores to proper directories:
+
+```bash
+sudo mkdir --parents /var/private/ssl
+
+sudo mv server.truststore.jks /var/private/ssl
+sudo mv client.truststore.jks /var/private/ssl
+sudo mv kafka-[BROKER_ID].keystore.jks /var/private/ssl/server.keystore.jks
+
+sudo chown --recursive root:root /var/private/ssl
+```
+
+- Configure each broker configuration:
+
+```bash
+# /etc/kafka/server.properties
+
+listeners=PLAINTEXT://kafka-[BROKER_ID]:9092,SSL://kafka-[BROKER_ID]:9093
+
+# advertised.listeners=PLAINTEXT://kafka-[BROKER_ID]:9092
+
+ssl.keystore.location=/var/private/ssl/server.keystore.jks
+ssl.keystore.password=<KEYSTORE_PASSWORD>
+ssl.key.password=<BROKER_KEY_PASSWORD>
+ssl.truststore.location=/var/private/ssl/server.truststore.jks
+ssl.truststore.password=<TRUSTSTORE_PASSWORD>
+ssl.client.auth=none
+```
+
+- Restart Kafka service:
+
+```bash
+sudo systemctl restart confluent-kafka
+```
+
+### Testing secure configuration
+
+- Create a properties file:
+
+```bash
+# client-ssl.properties
+
+security.protocol=SSL
+ssl.truststore.location=/var/private/ssl/client.truststore.jks
+ssl.truststore.password=<CLIENT_TRUSTSTORE_PASSWORD>
+```
+
+- Use configuration file (using secure **9093** port):
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server kafka-[BROKER_ID]:9093 \
+  --topic tls-test \
+  --from-beginning \
+  --consumer.config client-ssl.properties
+```
+
+## Client Authentication
+
+- Create a keystore for client certificates:
+
+```bash
+keytool \
+  -keystore client.keystore.jks \
+  -alias kafkauser \
+  -validity 365 \
+  -genkey \
+  -keyalg RSA \
+  -dname "CN=kafkauser, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown"
+```
+
+- Generate a client certificate:
+
+```bash
+keytool \
+  -keystore client.keystore.jks \
+  -alias kafkauser \
+  -certreq \
+  -file client-cert-file
+```
+
+- Sign certificate:
+
+```bash
+openssl x509 \
+  -req \
+  -CA ca-cert \
+  -CAkey ca-key \
+  -in client-cert-file \
+  -out client-cert-signed \
+  -days 365 \
+  -CAcreateserial
+```
+
+- Import CA certificate to client keystore:
+
+```bash
+keytool \
+  -keystore client.keystore.jks \
+  -alias CARoot \
+  -import \
+  -file ca-cert
+```
+
+- Import signed certificate to client keystore:
+
+```bash
+keytool \
+  -keystore client.keystore.jks \
+  -alias kafkauser \
+  -import \
+  -file client-cert-signed
+```
+
+- Move keystore to proper directory:
+
+```bash
+sudo mv client.keystore.jks /var/private/ssl
+sudo chown root:root /var/private/ssl/client.keystore.jks
+```
+
+- Configure each broker configuration:
+
+```bash
+# /etc/kafka/server.properties
+
+ssl.client.auth=required
+```
+
+- Restart Kafka service:
+
+```bash
+sudo systemctl restart confluent-kafka
+```
+
+### Testing client secure configuration
+
+- Update properties file:
+
+```bash
+# client-ssl.properties
+
+ssl.keystore.location=/var/private/ssl/client.keystore.jks
+ssl.keystore.password=<CLIENT_KEYSTORE_PASSWORD>
+ssl.key.password=<CLIENT_KEY_PASSWORD>
+```
+
+- Use configuration file (using secure **9093** port):
+
+```bash
+kafka-console-consumer \
+  --bootstrap-server kafka-[BROKER_ID]:9093 \
+  --topic tls-test \
+  --from-beginning \
+  --consumer.config client-ssl.properties
 ```
