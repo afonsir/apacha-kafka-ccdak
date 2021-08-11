@@ -1140,3 +1140,61 @@ kafka-console-consumer \
   --from-beginning \
   --consumer.config client-ssl.properties
 ```
+
+## ACL Authorization
+
+An *Access Control List* consists of:
+
+- **Principal** - user.
+- **Allow/Deny**
+- **Operation** - action (read, write, all).
+- **Host** - IP address(es).
+- **Resource Pattern** - matches one or more resources.
+
+---
+
+- Enable ACL in each broker:
+
+```bash
+# /etc/kafka/server.properties
+
+authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer
+super.users=User:admin
+allow.everyone.if.no.acl.found=true
+ssl.principal.mapping.rules=RULE:^CN=(.*?),OU=.*$/$1/,DEFAULT
+```
+
+- Restart Kafka service:
+
+```bash
+sudo systemctl restart confluent-kafka
+```
+
+- To create an ACL:
+
+```bash
+kafka-acls \
+  --authorizer-properties zookeeper.connect=localhost:2181 \
+  --add \
+  --allow-principal User:[USER_NAME] \
+  --operation all \
+  --topic [TOPIC_NAME]
+```
+
+- To list topic's ACLs:
+
+```bash
+kafka-acls \
+  --authorizer-properties zookeeper.connect=localhost:2181 \
+  --list \
+  --topic [TOPIC_NAME]
+```
+
+- To remove an ACL from a topic:
+
+```bash
+kafka-acls \
+  --authorizer-properties zookeeper.connect=localhost:2181 \
+  --remove \
+  --topic [TOPIC_NAME]
+```
