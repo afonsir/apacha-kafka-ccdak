@@ -78,3 +78,10 @@ task(runSchemaRegistryConsumer, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.schemaregistry.SchemaRegistryConsumerMain'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+// ----- Testing -----
+
+task(runMyProducer, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.testing.MyProducer'
+   classpath = sourceSets.main.runtimeClasspath
+}
