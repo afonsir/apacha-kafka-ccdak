@@ -90,3 +90,8 @@ task(runMyConsumer, dependsOn: 'classes', type: JavaExec) {
    main = 'com.github.afonsir.testing.MyConsumer'
    classpath = sourceSets.main.runtimeClasspath
 }
+
+task(runMyStreams, dependsOn: 'classes', type: JavaExec) {
+   main = 'com.github.afonsir.testing.MyStreams'
+   classpath = sourceSets.main.runtimeClasspath
+}
