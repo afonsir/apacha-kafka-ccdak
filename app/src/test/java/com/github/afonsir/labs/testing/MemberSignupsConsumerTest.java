@@ -1,4 +1,4 @@
-package com.github.afonsir.testing;
+package com.github.afonsir.labs.testing;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
