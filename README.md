@@ -1196,3 +1196,48 @@ kafka-acls \
   --remove \
   --topic [TOPIC_NAME]
 ```
+
+## Monitoring Clients
+
+- Create a producer with JMX enabled:
+
+```bash
+KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false -Djava.rmi.server.hostname=localhost" \
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic monitor-test
+
+> hello world
+> ...
+```
+
+- Create a consumer with JMX enabled:
+
+```bash
+KAFKA_JMX_OPTS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.local.only=false -Djava.rmi.server.hostname=localhost" \
+kafka-console-consumer \
+  --bootstrap-server localhost:29092 \
+  --topic monitor-test \
+  --from-beginning
+```
+
+- Start graphical **JConsole**:
+
+```bash
+sudo jconsole
+```
+
+### Producer Metrics
+
+- **response-rate**: average acknowledgements per seconds (global and per broker).
+- **request-rate**: average requests per seconds (global and per broker).
+- **request-latency-avg**: average request latency in miliseconds (only per broker).
+- **outgoing-byte-rate**: bytes per seconds (global and per broker).
+- **io-wait-time-ns-avg**: average time socket ready read/write in nanoseconds (only global).
+
+### Consumer Metrics
+
+- **records-lag-max**: maximum record lag. How far the consumer is behind producers.
+- **bytes-consumed-rate**: rate of bytes consumed per second.
+- **records-consumed-rate**: rate of records consumed per second.
+- **fetch-rate**: fetch requests per second.
