@@ -1241,3 +1241,15 @@ sudo jconsole
 - **bytes-consumed-rate**: rate of bytes consumed per second.
 - **records-consumed-rate**: rate of records consumed per second.
 - **fetch-rate**: fetch requests per second.
+
+## Producer Tuning
+
+- **acks**: Determines when the broker will acknowledge the record.
+
+  - **0**: Producer will not wait for acknowledgements from ther server.
+  - **1**: Record will be acknowledged when the leader writes the record to the disk.
+  - **all / -1**: Record will be acknowledged only when the leader and all replicas have written the record to their disks.
+
+- **retries**: Number of times to retry a record if there is a transient error. (**max.in.flight.requests.per.connection** to 1, to records not appear in different order).
+
+- **batch.size**: Maximum number of bytes in a batch.
