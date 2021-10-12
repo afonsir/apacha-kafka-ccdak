@@ -103,7 +103,7 @@ kafka-topics \
 
 ## Create a Producer and a Consumer
 
-- Create the topic *inventory_purchases*:
+- Create the topic _inventory_purchases_:
 
 ```bash
 kafka-topics \
@@ -166,7 +166,7 @@ kafka-console-consumer \
 
 ## Data Streaming
 
-- Create the topic *streams-input-topic*:
+- Create the topic _streams-input-topic_:
 
 ```bash
 kafka-topics \
@@ -177,7 +177,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *streams-output-topic*:
+- Create the topic _streams-output-topic_:
 
 ```bash
 kafka-topics \
@@ -194,7 +194,7 @@ kafka-topics \
 ./gradlew run
 ```
 
-- Create a consumer for *streams-output-topic*:
+- Create a consumer for _streams-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -203,7 +203,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a producer for *streams-input-topic*:
+- Create a producer for _streams-input-topic_:
 
 ```bash
 kafka-console-producer \
@@ -220,7 +220,7 @@ kafka-console-producer \
 
 ## Stateless Transformations
 
-- Create the topic *stateless-transformations-input-topic*:
+- Create the topic _stateless-transformations-input-topic_:
 
 ```bash
 kafka-topics \
@@ -231,7 +231,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *stateless-transformations-output-topic*:
+- Create the topic _stateless-transformations-output-topic_:
 
 ```bash
 kafka-topics \
@@ -250,7 +250,7 @@ kafka-topics \
 ./gradlew runStatelessTransformations
 ```
 
-- Create a consumer for *stateless-transformations-output-topic*:
+- Create a consumer for _stateless-transformations-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -259,7 +259,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a producer for *stateless-transformations-input-topic*:
+- Create a producer for _stateless-transformations-input-topic_:
 
 ```bash
 kafka-console-producer \
@@ -277,7 +277,7 @@ kafka-console-producer \
 
 ## Aggregation
 
-- Create the topic *aggregations-input-topic*:
+- Create the topic _aggregations-input-topic_:
 
 ```bash
 kafka-topics \
@@ -288,7 +288,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *aggregations-output-character-count-topic*:
+- Create the topic _aggregations-output-character-count-topic_:
 
 ```bash
 kafka-topics \
@@ -299,7 +299,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *aggregations-output-count-topic*:
+- Create the topic _aggregations-output-count-topic_:
 
 ```bash
 kafka-topics \
@@ -310,7 +310,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *aggregations-output-reduce-topic*:
+- Create the topic _aggregations-output-reduce-topic_:
 
 ```bash
 kafka-topics \
@@ -329,7 +329,7 @@ kafka-topics \
 ./gradlew runAggregations
 ```
 
-- Create a consumer for *aggregations-output-character-count-topic*:
+- Create a consumer for _aggregations-output-character-count-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -339,7 +339,7 @@ kafka-console-consumer \
   --property value.deserializer=org.apache.kafka.common.serialization.IntegerDeserializer
 ```
 
-- Create a consumer for *aggregations-output-count-topic*:
+- Create a consumer for _aggregations-output-count-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -349,7 +349,7 @@ kafka-console-consumer \
   --property value.deserializer=org.apache.kafka.common.serialization.LongDeserializer
 ```
 
-- Create a consumer for *aggregations-output-reduce-topic*:
+- Create a consumer for _aggregations-output-reduce-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -358,7 +358,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a producer for *aggregations-input-topic*:
+- Create a producer for _aggregations-input-topic_:
 
 ```bash
 kafka-console-producer \
@@ -375,7 +375,7 @@ kafka-console-producer \
 
 ## Joins
 
-- Create the topic *joins-input-topic-left*:
+- Create the topic _joins-input-topic-left_:
 
 ```bash
 kafka-topics \
@@ -386,7 +386,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *joins-input-topic-right*:
+- Create the topic _joins-input-topic-right_:
 
 ```bash
 kafka-topics \
@@ -397,7 +397,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *inner-join-output-topic*:
+- Create the topic _inner-join-output-topic_:
 
 ```bash
 kafka-topics \
@@ -408,7 +408,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *left-join-output-topic*:
+- Create the topic _left-join-output-topic_:
 
 ```bash
 kafka-topics \
@@ -419,7 +419,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *outer-join-output-topic*:
+- Create the topic _outer-join-output-topic_:
 
 ```bash
 kafka-topics \
@@ -438,7 +438,7 @@ kafka-topics \
 ./gradlew runJoins
 ```
 
-- Create a consumer for *inner-join-output-topic*:
+- Create a consumer for _inner-join-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -447,7 +447,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a consumer for *left-join-output-topic*:
+- Create a consumer for _left-join-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -456,7 +456,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a consumer for *outer-join-output-topic*:
+- Create a consumer for _outer-join-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -465,7 +465,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a producer for *joins-input-topic-left*:
+- Create a producer for _joins-input-topic-left_:
 
 ```bash
 kafka-console-producer \
@@ -479,7 +479,7 @@ kafka-console-producer \
 >b:foo
 ```
 
-- Create a producer for *joins-input-topic-right*:
+- Create a producer for _joins-input-topic-right_:
 
 ```bash
 kafka-console-producer \
@@ -495,7 +495,7 @@ kafka-console-producer \
 
 ## Windowing
 
-- Create the topic *windowing-input-topic*:
+- Create the topic _windowing-input-topic_:
 
 ```bash
 kafka-topics \
@@ -506,7 +506,7 @@ kafka-topics \
   --partitions 3
 ```
 
-- Create the topic *windowing-output-topic*:
+- Create the topic _windowing-output-topic_:
 
 ```bash
 kafka-topics \
@@ -525,7 +525,7 @@ kafka-topics \
 ./gradlew runWindowing
 ```
 
-- Create a consumer for *windowing-output-topic*:
+- Create a consumer for _windowing-output-topic_:
 
 ```bash
 kafka-console-consumer \
@@ -534,7 +534,7 @@ kafka-console-consumer \
   --property print.key=true
 ```
 
-- Create a producer for *windowing-input-topic*:
+- Create a producer for _windowing-input-topic_:
 
 ```bash
 kafka-console-producer \
@@ -580,7 +580,7 @@ kafka-configs \
 
 ## Producer Metadata
 
-- Create the topic *count-topic*:
+- Create the topic _count-topic_:
 
 ```bash
 kafka-topics \
@@ -601,7 +601,7 @@ kafka-topics \
 
 ## Consume from Multiple Topics
 
-- Create the topic *first-topic*:
+- Create the topic _first-topic_:
 
 ```bash
 kafka-topics \
@@ -612,7 +612,7 @@ kafka-topics \
   --partitions 2
 ```
 
-- Create the topic *second-topic*:
+- Create the topic _second-topic_:
 
 ```bash
 kafka-topics \
@@ -629,7 +629,7 @@ kafka-topics \
 ./gradlew runConsumer
 ```
 
-- Create a producer for *first-topic*:
+- Create a producer for _first-topic_:
 
 ```bash
 kafka-console-producer \
@@ -644,7 +644,7 @@ kafka-console-producer \
 >c:hello
 ```
 
-- Create a producer for *second-topic*:
+- Create a producer for _second-topic_:
 
 ```bash
 kafka-console-producer \
@@ -744,9 +744,7 @@ curl \
 // topic-subscription.json
 
 {
-  "topics": [
-    "<TOPIC_NAME>"
-  ]
+  "topics": ["<TOPIC_NAME>"]
 }
 ```
 
@@ -891,7 +889,7 @@ openssl req -new \
   -subj "/C=US/ST=Texas/L=Keller/O=Linux Academy/OU=Content/CN=CCDAK"
 ```
 
-- Create a *client* keystore:
+- Create a _client_ keystore:
 
 ```bash
 keytool \
@@ -901,7 +899,7 @@ keytool \
   -file ca-cert
 ```
 
-- Create a *server* keystore:
+- Create a _server_ keystore:
 
 ```bash
 keytool \
@@ -1143,7 +1141,7 @@ kafka-console-consumer \
 
 ## ACL Authorization
 
-An *Access Control List* consists of:
+An _Access Control List_ consists of:
 
 - **Principal** - user.
 - **Allow/Deny**
