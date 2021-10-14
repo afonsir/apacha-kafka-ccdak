@@ -1253,3 +1253,16 @@ sudo jconsole
 - **retries**: Number of times to retry a record if there is a transient error. (**max.in.flight.requests.per.connection** to 1, to records not appear in different order).
 
 - **batch.size**: Maximum number of bytes in a batch.
+
+## Consumer Tuning:
+
+- **fetch.min.bytes**: The minimum amount of data to fetch in a request.
+- **heartbeat.interval. ms**: How often to send heartbeats to the consumer coordinator.
+
+- **auto.offset.reset**: What to do when consumer has no initial offset.
+
+  - **Latest**: Start at the latest record (default).
+  - **Earliest**: Start at the earliest record.
+  - **none**: Throw an exception when there is no existing offset data.
+
+- **enable.auto.commit**: Periodically commit the current offset in the background.
