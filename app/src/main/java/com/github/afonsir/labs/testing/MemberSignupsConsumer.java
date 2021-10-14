@@ -29,6 +29,11 @@ public class MemberSignupsConsumer {
         props.setProperty( ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName() );
         props.setProperty( ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false" );
 
+        props.setProperty( ConsumerConfig.FETCH_MIN_BYTES_CONFIG, Integer.toString(1024) ); // 1 kb
+        props.setProperty( ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, Integer.toString(2000) ); // 2 seconds
+
+        props.setProperty( ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest" ); // none, earliest or latest
+
         consumer = new KafkaConsumer<>( props );
         consumer.subscribe( Arrays.asList( "test-topic1", "test-topic2" ));
     }
