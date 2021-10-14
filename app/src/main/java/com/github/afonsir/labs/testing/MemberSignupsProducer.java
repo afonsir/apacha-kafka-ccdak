@@ -26,6 +26,11 @@ public class MemberSignupsProducer {
         props.setProperty( ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName() );
         props.setProperty( ProducerConfig.ACKS_CONFIG, "all" );
 
+        props.setProperty( ProducerConfig.RETRIES_CONFIG, Integer.toString(3) );
+        props.setProperty( ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, Integer.toString(1) );
+
+        props.setProperty( ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(65536) ); // 64 kb
+
         producer = new KafkaProducer<>(props);
     }
 
