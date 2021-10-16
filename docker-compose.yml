@@ -1,10 +1,8 @@
-version: '3'
+version: "3"
 
-x-zookeeper-common:
-  &zookeeper-common
+x-zookeeper-common: &zookeeper-common
   image: confluentinc/cp-zookeeper:6.2.0
-  environment:
-    &zookeeper-common-env
+  environment: &zookeeper-common-env
     ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: 24
     ZOOKEEPER_AUTOPURGE_SNAP_RETAIN_COUNT: 3
     ZOOKEEPER_DATA_DIR: /var/lib/zookeeper/
@@ -15,11 +13,9 @@ x-zookeeper-common:
     ZOOKEEPER_TICK_TIME: 2000
   network_mode: host
 
-x-kafka-common:
-  &kafka-common
+x-kafka-common: &kafka-common
   image: confluentinc/cp-kafka:6.2.0
-  environment:
-    &kafka-common-env
+  environment: &kafka-common-env
     KAFKA_DEFAULT_REPLICATION_FACTOR: 3
     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -38,11 +34,9 @@ x-kafka-common:
       condition: service_healthy
   network_mode: host
 
-x-kafka-schema-registry:
-  &kafka-schema-registry
+x-kafka-schema-registry: &kafka-schema-registry
   image: confluentinc/cp-schema-registry:6.2.0
-  environment:
-    &kafka-schema-registry-env
+  environment: &kafka-schema-registry-env
     SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
     SCHEMA_REGISTRY_DEBUG: "true"
   depends_on:
@@ -54,11 +48,9 @@ x-kafka-schema-registry:
       condition: service_healthy
   network_mode: host
 
-x-kafka-rest-proxy:
-  &kafka-rest-proxy
+x-kafka-rest-proxy: &kafka-rest-proxy
   image: confluentinc/cp-kafka-rest:6.2.0
-  environment:
-    &kafka-rest-proxy-env
+  environment: &kafka-rest-proxy-env
     KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
   depends_on:
     kafka-1:
