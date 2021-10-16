@@ -53,11 +53,11 @@ x-kafka-rest-proxy: &kafka-rest-proxy
   environment: &kafka-rest-proxy-env
     KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
   depends_on:
-    kafka-1:
+    schema-1:
       condition: service_healthy
-    kafka-2:
+    schema-2:
       condition: service_healthy
-    kafka-3:
+    schema-3:
       condition: service_healthy
   network_mode: host
 
