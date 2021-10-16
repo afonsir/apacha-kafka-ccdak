@@ -61,6 +61,19 @@ x-kafka-rest-proxy: &kafka-rest-proxy
       condition: service_healthy
   network_mode: host
 
+x-kafka-ksql-server: &kafka-ksql-server
+  image: confluentinc/cp-ksql-server:5.4.3
+  environment: &kafka-ksql-server-env
+    KSQL_BOOTSTRAP_SERVERS: PLAINTEXT://localhost:29092,PLAINTEXT://localhost:39092,PLAINTEXT://localhost:49092
+  depends_on:
+    kafka-1:
+      condition: service_healthy
+    kafka-2:
+      condition: service_healthy
+    kafka-3:
+      condition: service_healthy
+  network_mode: host
+
 services:
   zookeeper-1:
     <<: *zookeeper-common
@@ -217,6 +230,42 @@ services:
       KAFKA_REST_HOST_NAME: rest-3
     healthcheck:
       test: ["CMD", "nc", "-vz", "localhost", "48082"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  ksql-1:
+    <<: *kafka-ksql-server
+    environment:
+      <<: *kafka-ksql-server-env
+      KSQL_KSQL_SERVICE_ID: ksql-1
+      KSQL_LISTENERS: http://0.0.0.0:28088
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "28088"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  ksql-2:
+    <<: *kafka-ksql-server
+    environment:
+      <<: *kafka-ksql-server-env
+      KSQL_KSQL_SERVICE_ID: ksql-2
+      KSQL_LISTENERS: http://0.0.0.0:38088
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "38088"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  ksql-3:
+    <<: *kafka-ksql-server
+    environment:
+      <<: *kafka-ksql-server-env
+      KSQL_KSQL_SERVICE_ID: ksql-3
+      KSQL_LISTENERS: http://0.0.0.0:48088
+    healthcheck:
+      test: ["CMD", "nc", "-vz", "localhost", "48088"]
       interval: 10s
       timeout: 10s
       retries: 5
