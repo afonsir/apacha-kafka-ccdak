@@ -1266,3 +1266,100 @@ sudo jconsole
   - **none**: Throw an exception when there is no existing offset data.
 
 - **enable.auto.commit**: Periodically commit the current offset in the background.
+
+## KSQL
+
+- Configure KSQL Server:
+
+```bash
+# /etc/ksql/ksql-server.properties
+
+bootstrap.servers=kafka-[BROKER_ID]:9092
+ksql.streams.state.dir=/tmp/kafka-streams
+```
+
+- Enable KSQL service:
+
+```bash
+sudo systemctl enable confluent-ksql
+```
+
+- Start KSQL service:
+
+```bash
+sudo systemctl start confluent-ksql
+```
+
+- Create the topic _ksql-test_:
+
+```bash
+kafka-topics \
+  --bootstrap-server localhost:29092 \
+  --create \
+  --topic ksql-test \
+  --partitions 1 \
+  --replication-factor 1
+```
+
+- Create a producer for _ksql-test_:
+
+```bash
+kafka-console-producer \
+  --broker-list localhost:29092 \
+  --topic ksql-test \
+  --property parse.key=true \
+  --property key.separator=:
+
+# To add messages
+>5:5,sarah,2
+>7:7,andy,1
+>5:5,sarah,3
+```
+
+- To start KSQL console:
+
+```bash
+sudo ksql http://localhost:28088
+```
+
+- To change a configuration:
+
+```bash
+SET 'auto.offset.reset' = 'earliest';
+```
+
+- List topics:
+
+```bash
+SHOW TOPICS;
+```
+
+- Show topic's data:
+
+```bash
+PRINT 'ksql-test' FROM BEGINNING;
+```
+
+- Create a stream from a topic:
+
+```bash
+CREATE STREAM ksql_test_stream (employee_id INTEGER, name VARCHAR, vacation_days INTEGER) WITH (kafka_topic='ksql-test', value_format='DELIMITED');
+```
+
+- Create a table from a topic:
+
+```bash
+CREATE TABLE ksql_test_table (employee_id INTEGER, name VARCHAR, vacation_days INTEGER) WITH (kafka_topic='ksql-test', value_format='DELIMITED', key='employee_id');
+```
+
+- Select from a stream or table:
+
+```bash
+SELECT * FROM ksql_test_stream EMIT CHANGES;
+```
+
+- Grouping from a stream:
+
+```bash
+SELECT SUM(vacation_days) FROM ksql_test_stream GROUP BY employee_id EMIT CHANGES;
+```
