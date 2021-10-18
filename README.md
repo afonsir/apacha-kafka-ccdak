@@ -1363,3 +1363,37 @@ SELECT * FROM ksql_test_stream EMIT CHANGES;
 ```bash
 SELECT SUM(vacation_days) FROM ksql_test_stream GROUP BY employee_id EMIT CHANGES;
 ```
+
+- Conditional streaming:
+
+```bash
+CREATE STREAM member_signups
+  (firstname VARCHAR,
+    lastname VARCHAR,
+    email_notifications BOOLEAN)
+  WITH (KAFKA_TOPIC='member_signups',
+    VALUE_FORMAT='DELIMITED');
+
+CREATE STREAM member_signups_email AS
+  SELECT * FROM member_signups WHERE email_notifications=true;
+```
+
+- Joining streamings:
+
+```bash
+CREATE STREAM member_signups
+  (firstname VARCHAR,
+    lastname VARCHAR)
+  WITH (KAFKA_TOPIC='member_signups',
+    VALUE_FORMAT='DELIMITED');
+
+CREATE STREAM member_contact
+  (email VARCHAR)
+  WITH (KAFKA_TOPIC='member_contact',
+    VALUE_FORMAT='DELIMITED');
+
+CREATE STREAM member_email_list AS
+  SELECT member_signups.firstname, member_signups.lastname, member_contact.email
+  FROM member_signups
+  INNER JOIN member_contact WITHIN 365 DAYS ON member_signups.rowkey = member_contact.rowkey;
+```
